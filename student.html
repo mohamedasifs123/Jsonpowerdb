@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Information Form</title>
+  <link rel="stylesheet"
+href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script
+src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script
+src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  
+  
+</head>
+<body>
+    <h2>Student Information Form</h2>
+    <form id="studentForm" method="post" >
+        <label for="rollNo">Roll Number:</label>
+        <input type="text" id="rollNo" name="rollNo" onchange =getemp()><br><br>
+
+        <label for="fullName">Full Name:</label>
+        <input type="text" id="fullName" name="fullName"><br><br>
+
+        <label for="class">Class:</label>
+        <input type="text" id="class" name="class"><br><br>
+
+        <label for="birthDate">Birth Date:</label>
+        <input type="date" id="birthDate" name="birthDate"><br><br>
+<label for="address">Address:</label>
+        <textarea id="address" name="address" rows="4" cols="50"></textarea><br><br>
+
+        <label for="enrollmentDate">Enrollment Date:</label>
+        <input type="date" id="enrollmentDate" name="enrollmentDate"><br><br>
+
+        <input type="submit" value="Save" onclick="saveData()">
+        <input type="button" value="Reset" onclick="resetForm()">
+        <input type="button" value="Change" onclick="changeForm()">
+    </form>
+  <script>
+  var baseurl= 'http://api.login2explore.com:5577';
+  var irl='/api/irl';
+  var iml='/api/iml';
+  var dbname='student';
+  var rel='student-rel';
+  var contoken='90931582|-31949333927522287|90960072';
+  
+  
+        function validateForm() {
+            var rollNo = document.getElementById("rollNo").value;
+            var fullName = document.getElementById("fullName").value;
+            var studentClass = document.getElementById("class").value;
+            var birthDate = document.getElementById("birthDate").value;
+            var address = document.getElementById("address").value;
+            var enrollmentDate = document.getElementById("enrollmentDate").value;
+
+            if (rollNo === "") {
+                alert("Roll Number is required.");
+              $('#rollNo').focus();
+                return false;
+            }
+            if (fullName === "") {
+                alert("Full Name is required.");
+              $('#fullName').focus();
+                return false;
+            }
+            if (studentClass === "") {
+                alert("Class is required.");
+              $('#studentClass').focus();
+                return false;
+            }
+            if (birthDate === "") {
+                alert("Birth Date is required.");
+                $('#birthDate').focus();
+                return false;
+            }
+            if (address === "") {
+                alert("Address is required.");
+              $('#address').focus();
+                return false;
+            }
+            if (enrollmentDate === "") {
+                alert("Enrollment Date is required.");
+              $('#enrollmentDate').focus();
+                return false;
+            }
+
+            return true;
+          var jsonobj={
+            roll=rollNo,
+            name=fullName,
+            bd=birthDate,
+            address=address,
+            ed=enrollmentDate};
+          return JSON.stringify(jsonobj);
+       
+        }
+
+        function clearForm() {
+            document.getElementById("studentForm").reset();
+        }
+
+        function resetForm() {
+            document.getElementById("rollNo").value = "";
+            document.getElementById("fullName").value = "";
+            document.getElementById("class").value = "";
+            document.getElementById("birthDate").value = "";
+            document.getElementById("address").value = "";
+            document.getElementById("enrollmentDate").value = "";
+        }
+  function saveData(){
+    var jsonstr=validateForm();
+    if (jsonstr===''){
+      return '';}
+    var putrequest = createPUTRequest(contoken ,jsonstr , dbname ,rel);
+    jquery.ajaxSetup({async:false});
+    var res  = executeCommandAtGivenBaseUrl(putrequest, baseurl,iml);
+    
+    jquery.ajaxSetup({async:true});
+    resetForm();
+    $(rollNo).focus();}
+    function changeData(){
+      $('#change').prop('disabled',true);
+      jsonchange= validateData();
+      
+      
+      var updaterequest = createUpdateRecordRequest(contoken ,jsonchamge , dbname ,rel ,localStorage.getItem('recno');
+    jquery.ajaxSetup({async:false});
+    var res  = executeCommandAtGivenBaseUrl(updaterequest, baseurl,iml);
+    
+    jquery.ajaxSetup({async:true});
+    resetForm();
+    $('#rollNo').focus();}
+  function getst(){
+    var rollno = getrollno();
+    var getrequest = createGET_BY_KEYRequest(contoken ,dbname ,rel , empid);
+    jquery.ajaxSetup({async:false});
+      var resjsonobj  = executeCommandAtGivenBaseUrl(putrequest, baseurl,iml);
+    jquery.ajaxSetup({async:true});
+   
+    if(resjsonobj.status === 400){
+     $('#save').prop('disabled',false); 
+      $('#reset').prop('disabled',false);
+      $('#fullName').focus();}
+    elseif (resjsonobj.status === 200){
+      $('#rollNo').prop('disabled',true);
+      fillData(resjsonobj);
+      $('#change').prop('disabled',false); 
+      $('#reset').prop('disabled',false);
+      $('#fullName').focus();}}
+  function fillData(){
+    saveRecNo2LS(jsonobj);
+    var data = JSON.parse(jsonobj.data).record;
+    $('#fullName').val(record.name);
+    $('#birthDate').val(record.birthdate);
+    $('#enrollmentDate').val(record.enrollmentdate);
+    $('#class').val(record.class);
+    $('#address').val(record.address);
+  }
+  function saveRecNo2LS(jsonobj){
+    val lvdata = JSON.parse(jsonobj.data);
+    local storagee.setItem('recno',lvdata.rec_no);
+  }
+      
+  function getrollno(){
+    var rollno =  $('#rollNo').val();
+      var jsonstr = {
+        id:rollNo;
+      };
+    return JSON.stringify(jsonstr);}
+    </script>
+</body>
+</html>
